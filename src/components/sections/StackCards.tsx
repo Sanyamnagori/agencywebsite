@@ -6,7 +6,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ASSETS } from "@/lib/assets";
 import Particles from "@/components/common/Particles";
 import CardGradientBorder from "@/components/common/CardGradientBorder";
-import { ViewItem } from "@/components/common/Animations";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -50,63 +49,55 @@ export default function StackCards() {
 
     const cardEls = container.querySelectorAll<HTMLElement>(".stack-card-wrapper");
 
-    ScrollTrigger.create({
-      trigger: container,
-      start: "top top",
-      end: `+=${cardEls.length * 100}%`,
-      pin: true,
-      pinSpacing: true,
+    // Use a unified timeline for pinning and sequencing the cards
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: container,
+        start: "top top",
+        end: `+=${(cardEls.length - 1) * 200}vh`, // Generous scroll distance for the slide
+        pin: true,
+        scrub: 1,
+        anticipatePin: 1,
+      },
     });
 
     cardEls.forEach((card, i) => {
-      if (i === 0) return;
-      gsap.fromTo(
-        card,
-        { y: "80vh", opacity: 0, scale: 0.88 },
-        {
-          y: 0, opacity: 1, scale: 1, ease: "power4.inOut",
-          scrollTrigger: {
-            trigger: container,
-            start: `${(i / cardEls.length) * 75}% top`,
-            end: `${((i + 0.5) / cardEls.length) * 75}% top`,
-            scrub: 1,
-          },
-        }
-      );
-    });
-
-    cardEls.forEach((card, i) => {
-      if (i === cardEls.length - 1) return;
-      gsap.to(card, {
-        scale: 0.92, opacity: 0.5, filter: "brightness(0.5)", ease: "none",
-        scrollTrigger: {
-          trigger: container,
-          start: `${((i + 0.5) / cardEls.length) * 75}% top`,
-          end: `${((i + 1) / cardEls.length) * 75}% top`,
-          scrub: 1,
-        },
-      });
+      // Enter animation for cards after the first one (they start below the screen)
+      if (i > 0) {
+        gsap.set(card, { y: "100vh" });
+        tl.to(card, {
+          y: 0, 
+          ease: "none",
+          duration: 1
+        }, (i - 1) * 1); // Slide in exactly as the previous card slides out
+      }
+      
+      // Exit animation for cards before the last one (they slide up and out of the screen)
+      if (i < cardEls.length - 1) {
+        tl.to(card, {
+          y: "-100vh", // Go upside!
+          ease: "none",
+          duration: 1
+        }, i * 1); 
+      }
     });
 
     return () => {
-      ScrollTrigger.getAll()
-        .filter((t) => t.vars.trigger === container)
-        .forEach((t) => t.kill());
+      tl.kill();
     };
   }, []);
 
   return (
     <section id="for-whom" className="stack-sc relative bg-[#0c0b0c]">
-      <div className="stack-height" style={{ height: "200vh" }}>
-        <div ref={containerRef} className="stack-sticky sticky top-0 h-screen flex items-center justify-center">
-          <div className="container stack-s relative w-full flex items-center justify-center" style={{ padding: "0 5.56rem", height: "80vh" }}>
+      <div ref={containerRef} className="stack-sticky h-screen flex items-center justify-center overflow-hidden">
+        <div className="container stack-s relative w-full flex items-center justify-center" style={{ padding: "0 5.56rem", height: "80vh" }}>
             {cards.map((card, i) => (
               <div
                 key={card.id}
                 className={`stack-card-wrapper stack-card ${card.wrapperClass} absolute inset-0 flex items-center justify-center`}
                 style={{ zIndex: i + 1, transformOrigin: "50% 0%" }}
               >
-                <ViewItem type="from-center" className="w-full flex justify-center">
+                <div className="w-full flex justify-center">
                   <div className="stack-card-stroke relative overflow-hidden" style={{ background: "#4a494b", borderRadius: "2rem", width: "84rem", maxWidth: "100%", height: "42rem", padding: "0.1rem" }}>
                     <CardGradientBorder variant={card.gradientVariant} />
                     <div
@@ -135,12 +126,11 @@ export default function StackCards() {
                       <img src={card.imageMob} alt="" className="stack-image-p absolute object-contain" style={{ ...card.imageStyle, zIndex: 200, position: "absolute" }} />
                     </div>
                   </div>
-                </ViewItem>
+                </div>
               </div>
             ))}
           </div>
         </div>
-      </div>
     </section>
   );
 }

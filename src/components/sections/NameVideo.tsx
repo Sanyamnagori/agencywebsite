@@ -49,62 +49,66 @@ export default function NameVideo() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="name-sc relative bg-[#0c0b0c] overflow-hidden">
-      <div className="container name-s relative" style={{ paddingTop: "18rem", paddingBottom: "18rem", overflow: "hidden" }}>
-        <div className="text-elements name-s relative" style={{ zIndex: 200 }}>
+    <section ref={sectionRef} className="name-sc relative bg-[#0c0b0c] overflow-hidden" style={{ paddingTop: "10rem", paddingBottom: "10rem" }}>
+      {/* Full-width text block */}
+      <div className="relative w-full" style={{ zIndex: 200 }}>
+        {/* Tag label centered above the headline */}
+        <div className="flex justify-center mb-6">
           <AnimatedSplitText
             preset="from-down-blur"
             as="p"
-            className="name-tag view-d absolute text-white"
-            style={{ top: "14%", fontSize: "1.38rem", lineHeight: "120%" }}
+            className="name-tag view-d text-white text-center"
+            style={{ fontSize: "1.38rem", lineHeight: "120%" }}
             text="The Ultimate Manifestation Tool"
           />
-          <p className="name-tag view-p absolute text-white" style={{ fontSize: "1.38rem", lineHeight: "120%" }}>
+          <p className="name-tag view-p text-white text-center" style={{ fontSize: "1.38rem", lineHeight: "120%" }}>
             The Manifestation App
           </p>
-
-          <div className="name-headline-wrap overflow-hidden">
-            <div ref={pathRef} className="name-headline-path flex w-max">
-              {MARQUEE_HEADLINES.map((text, i) => (
-                <div key={i} className={`name-headline-block flex-none ${i > 0 ? "view-p" : ""}`}>
-                  {i === 0 ? (
-                    <AnimatedSplitText
-                      preset="from-right-blur"
-                      as="p"
-                      className="name-headline text-white text-center"
-                      style={{ fontSize: "13.2rem", letterSpacing: "-0.875rem", fontWeight: 500, lineHeight: "120%" }}
-                      text={text}
-                    />
-                  ) : (
-                    <p className="name-headline text-white text-center" style={{ fontSize: "13.2rem", letterSpacing: "-0.875rem", fontWeight: 500, lineHeight: "120%" }}>
-                      {text}
-                    </p>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
 
-        <div className="name-bg-wrapper absolute inset-0">
-          <div className="name-bg-embed absolute inset-0">
-            <video
-              className="w-full h-full object-cover pointer-events-none"
-              style={{ opacity: 0.5 }}
-              autoPlay muted loop playsInline
-              src={ASSETS.nameVideo}
-            />
+        {/* Headline — spans full viewport width */}
+        <div className="name-headline-wrap overflow-hidden w-full">
+          <div ref={pathRef} className="name-headline-path flex w-max" style={{ paddingLeft: "0.5vw" }}>
+            {MARQUEE_HEADLINES.map((text, i) => (
+              <div key={i} className={`name-headline-block flex-none ${i > 0 ? "view-p" : ""}`}>
+                {i === 0 ? (
+                  <AnimatedSplitText
+                    preset="from-right-blur"
+                    as="p"
+                    className="name-headline text-white"
+                    style={{ fontSize: "13.8vw", letterSpacing: "-0.04em", fontWeight: 500, lineHeight: "1", whiteSpace: "nowrap" }}
+                    text={text}
+                  />
+                ) : (
+                  <p className="name-headline text-white" style={{ fontSize: "13.8vw", letterSpacing: "-0.04em", fontWeight: 500, lineHeight: "1", whiteSpace: "nowrap", paddingRight: "2vw" }}>
+                    {text}
+                  </p>
+                )}
+              </div>
+            ))}
           </div>
-          <div
-            className="name-bg-mask absolute inset-0 pointer-events-none"
-            style={{
-              zIndex: 100,
-              background:
-                "linear-gradient(90deg, #0c0b0c 0%, transparent 10%, transparent 90%, #0c0b0c 100%), " +
-                "linear-gradient(180deg, #0c0b0c 0%, transparent 25%, transparent 75%, #0c0b0c 100%)",
-            }}
+        </div>
+      </div>
+
+      {/* Background video */}
+      <div className="name-bg-wrapper absolute inset-0" style={{ zIndex: 1 }}>
+        <div className="name-bg-embed absolute inset-0">
+          <video
+            className="w-full h-full object-cover pointer-events-none"
+            style={{ opacity: 0.5 }}
+            autoPlay muted loop playsInline
+            src={ASSETS.nameVideo}
           />
         </div>
+        <div
+          className="name-bg-mask absolute inset-0 pointer-events-none"
+          style={{
+            zIndex: 100,
+            background:
+              "linear-gradient(90deg, #0c0b0c 0%, transparent 10%, transparent 90%, #0c0b0c 100%), " +
+              "linear-gradient(180deg, #0c0b0c 0%, transparent 25%, transparent 75%, #0c0b0c 100%)",
+          }}
+        />
       </div>
     </section>
   );
